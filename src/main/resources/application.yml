@@ -1,0 +1,37 @@
+server:
+  port: 8088
+
+spring:
+  # 数据库
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/car_society?useUnicode=true&serverTimezone=Asia/Shanghai
+    username: root #改成你的mysql账号
+    password: root #改成你的mysql密码
+  # 本地图片存放路径
+  web:
+    resources:
+      static-locations: file:./upload/
+  servlet:
+    #图片上传最大限制
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 30MB
+
+# mybatis映射文件
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.sh.sh_xiao_cheng_xu.entity
+  configuration:
+    # 打印SQL日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: assign_id
+
+# 微信小程序配置（替换你自己的）
+wx:
+  miniapp:
+    app-id: 你的小程序AppID
+    app-secret: 你的小程序AppSecret
