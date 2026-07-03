@@ -62,6 +62,9 @@
             <version>4.7.0</version>
         </dependency>
 
+        <!-- http请求，调用微信登录接口 -->
+
+
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>

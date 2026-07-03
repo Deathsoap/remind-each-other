@@ -1,13 +1,13 @@
 server:
-  port: 8088
+  port: 8080
 
 spring:
   # 数据库
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/car_society?useUnicode=true&serverTimezone=Asia/Shanghai
-    username: root #改成你的mysql账号
-    password: root #改成你的mysql密码
+    username: root
+    password: 123456
   # 本地图片存放路径
   web:
     resources:
@@ -33,5 +33,5 @@ mybatis-plus:
 # 微信小程序配置（替换你自己的）
 wx:
   miniapp:
-    app-id: 你的小程序AppID
-    app-secret: 你的小程序AppSecret
+    app-id: wxdf61837a068247c3
+    app-secret: 47ed23242448cd909ac2213a52455e5f
