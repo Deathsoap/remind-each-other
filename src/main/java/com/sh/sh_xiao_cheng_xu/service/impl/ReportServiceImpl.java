@@ -29,7 +29,7 @@ public class ReportServiceImpl extends ServiceImpl<ReportInfoMapper, ReportInfo>
     private SocietyEventService eventService;
 
     @Override
-    public String publishReport(Long userId, Integer societyId, Long eventId, String desc, String imgUrls) {
+    public String publishReport(Long userId, Long societyId, Long eventId, String desc, String imgUrls) {
         // 1.查询社团后缀、地点名称
         Society society = societyService.getById(societyId);
         SocietyEvent event = eventService.getById(eventId);

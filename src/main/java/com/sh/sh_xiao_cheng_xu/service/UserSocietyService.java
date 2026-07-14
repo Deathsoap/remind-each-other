@@ -9,4 +9,5 @@ public interface UserSocietyService extends IService<UserSociety> {
     String joinSociety(Long userId, Long societyId);
     List<UserSociety> getByUserId(Long userId);
     List<UserSociety> getBySocietyId(Long societyId);
+    List<String> getMemberOpenIdBySocietyId(Long societyId);
 }

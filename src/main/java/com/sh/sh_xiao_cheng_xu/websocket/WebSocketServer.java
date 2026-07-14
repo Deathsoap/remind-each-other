@@ -41,7 +41,7 @@ public class WebSocketServer {
     }
 
     // 重点：加了 static，外面代码直接 类名.方法名() 调用不报错
-    public static void sendSocietyMsg(Integer societyId, String message) {
+    public static void sendSocietyMsg(Long societyId, String message) {
         CopyOnWriteArraySet<Session> sessionSet = societySessionMap.get(societyId);
         if (sessionSet == null || sessionSet.isEmpty()) return;
         for (Session s : sessionSet) {

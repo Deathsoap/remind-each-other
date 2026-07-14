@@ -1,9 +1,16 @@
 package com.sh.sh_xiao_cheng_xu.controller;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.sh.sh_xiao_cheng_xu.entity.WxUser;
+import com.sh.sh_xiao_cheng_xu.mapper.WxUserMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,22 +18,68 @@ import java.util.Map;
 @RequestMapping("/api/wx")
 public class WxLoginController {
 
-    // 模拟微信登录，真实环境需要调用微信官方接口换取openId，本地测试直接模拟
+    @Value("${wx.miniapp.appid:wxdf61837a068247c3}")
+    private String appId;
+
+    @Value("${wx.miniapp.secret:47ed23242448cd909ac2213a52455e5f}")
+    private String appSecret;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private WxUserMapper wxUserMapper;
+
     @PostMapping("/login")
-    public Map<String, Object> wxLogin(@RequestParam String code) {
+// 新增avatarUrl、nickName接收前端传过来的用户信息
+    public Map<String, Object> wxLogin(
+            @RequestParam String code,
+            @RequestParam(required = false) String avatarUrl,
+            @RequestParam(required = false) String nickName
+    ) {
         Map<String, Object> result = new HashMap<>();
-        // 模拟获取openId，正式环境用code调用微信api
-        String openId = "test_openid_123456";
-        // 模拟用户ID，数据库查询/新增用户
-        Long userId = 1L;
+        try {
+            String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appId
+                    + "&secret=" + appSecret + "&js_code=" + code + "&grant_type=authorization_code";
+            String response = restTemplate.getForObject(url, String.class);
+            JSONObject json = JSONObject.parseObject(response);
+            String openId = json.getString("openid");
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("userId", userId);
-        data.put("openId", openId);
+            if (openId == null || openId.isEmpty()) {
+                result.put("code", 500);
+                result.put("msg", "获取openId失败");
+                return result;
+            }
 
-        result.put("code", 200);
-        result.put("data", data);
-        result.put("msg", "登录成功");
+            WxUser user = wxUserMapper.selectByOpenId(openId);
+            if (user == null) {
+                WxUser newUser = new WxUser();
+                newUser.setOpenId(openId);
+                newUser.setAvatarUrl(avatarUrl);
+                newUser.setNickName(nickName);
+                wxUserMapper.insert(newUser);
+                user = wxUserMapper.selectByOpenId(openId);
+            } else {
+                // 老用户更新头像昵称
+                user.setAvatarUrl(avatarUrl);
+                user.setNickName(nickName);
+                wxUserMapper.updateById(user);
+            }
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("userId", user.getId());
+            data.put("openId", openId);
+            data.put("nickName", user.getNickName());
+            data.put("avatarUrl", user.getAvatarUrl());
+
+            result.put("code", 200);
+            result.put("data", data);
+            result.put("msg", "登录成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("code", 500);
+            result.put("msg", "登录异常：" + e.getMessage());
+        }
         return result;
     }
 }

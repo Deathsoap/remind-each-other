@@ -11,7 +11,7 @@ spring:
   # 本地图片存放路径
   web:
     resources:
-      static-locations: file:./upload/
+      static-locations: classpath:/static/,file:D:/upload/
   servlet:
     #图片上传最大限制
     multipart:

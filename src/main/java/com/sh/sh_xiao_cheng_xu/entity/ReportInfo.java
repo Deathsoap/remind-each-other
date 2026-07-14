@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class ReportInfo {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private Integer societyId;
+    private Long societyId;
     private Long eventId;
     private Long publisherUid;
     private String description;
